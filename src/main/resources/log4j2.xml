@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!-- Note that the packages attribute on the configuration is a comma-separated list of all the packages with custom log4j2 plugins. Log4j2 will search these packages in the classpath for classes annotated with @Plugin. -->
+<Configuration status="WARN" packages="com.example.springBootTest.log4j2">  
+    <Appenders>  
+        <Console name="Console" target="SYSTEM_OUT" follow="true">  
+            <PatternLayout>  
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>  
+            </PatternLayout>  
+        </Console> 
+        <!-- 按日期每天生成log文件 -->
+        <RollingFile name="RollingFile" fileName="logs/springBootTest.log" filePattern="logs/springBootTest-%d{yyyy-MM-dd}.log" append="true">
+			<PatternLayout pattern="%d %p %C{1.} [%t] %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"/>
+			</Policies>    
+			<!-- log文件只打印error级别信息 -->
+			<Filters>
+			     <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+			</Filters>
+		</RollingFile>
+		<MongoAppender name="MongoDB" connectionUrl="mongodb://localhost:27017" databaseName="logs_springBootTest" collectionName="logs_request">		
+		</MongoAppender>
+    </Appenders>  
+    
+    <Loggers>
+        <!-- 输出info级别信息 -->
+        <Root level="info">  
+            <AppenderRef ref="Console" />  
+            <AppenderRef ref="RollingFile" />  
+        </Root>  
+        <Logger name="org.apache.catalina.util.LifecycleBase" level="error" />  
+        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn" />  
+        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn" />  
+        <Logger name="org.hibernate.validator.internal.util.Version" level="warn" />  
+        <Logger name="org.springframework" level="info" />  
+        <Logger name="com.github" level="debug" />  
+        <Logger name="mongodb" level="info">
+            <AppenderRef ref="MongoDB" />
+        </Logger> 
+    </Loggers>  
+</Configuration>  
